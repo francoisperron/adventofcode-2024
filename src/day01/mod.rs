@@ -1,2 +1,2 @@
 mod _solve;
-mod location;
+mod locations;
