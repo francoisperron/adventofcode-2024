@@ -4,7 +4,7 @@ pub struct Reports {
 
 impl Reports {
     pub fn from(input: &str) -> Reports {
-        let reports = input.split("\n").map(Report::from).collect();
+        let reports = input.lines().map(Report::from).collect();
         Reports { reports }
     }
 }
