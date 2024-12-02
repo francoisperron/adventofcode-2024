@@ -1,5 +1,4 @@
-![badge](https://github.com/francoisperron/adventofcode-2024/actions/workflows/test-on-push.yml/badge.svg)\
-[⚡](https://github.com/francoisperron/adventofcode-2024/actions)
+[![Test](https://github.com/francoisperron/adventofcode-2024/actions/workflows/test-on-push.yml/badge.svg)](https://github.com/francoisperron/adventofcode-2024/actions/workflows/test-on-push.yml)
 
 ## 🎄⛄️ Advent of code 2024 ⛄🎄
 
