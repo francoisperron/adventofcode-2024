@@ -36,9 +36,12 @@ impl Map {
             .filter(|&p| {
                 self.grid.set_element_at(p, '#');
 
+                let mut seen = vec![vec![[false; 4]; self.grid.max_y as usize]; self.grid.max_x as usize];
                 self.guard = Guard::new(starting_position);
-                while self.grid.is_inbound(&self.guard.position) && !self.guard.patrolled_with_direction.contains(&(self.guard.position, self.guard.direction)) {
+                while self.grid.is_inbound(&self.guard.position) && !seen[self.guard.position.x as usize][self.guard.position.y as usize][self.guard.direction as usize]{
+                    seen[self.guard.position.x as usize][self.guard.position.y as usize][self.guard.direction as usize] = true;
                     self.guard.patrol(&self.grid);
+
                 }
                 let is_a_cycle = self.grid.is_inbound(&self.guard.position);
 
@@ -54,17 +57,14 @@ pub struct Guard {
     pub position: Position,
     pub direction: Direction,
     pub patrolled: HashSet<Position>,
-    pub patrolled_with_direction: HashSet<(Position, Direction)>,
 }
 
 impl Guard {
     pub fn new(position: Position) -> Guard {
-        Guard { position, direction: Direction::Up, patrolled: HashSet::from([position]), patrolled_with_direction: HashSet::new() }
+        Guard { position, direction: Direction::Up, patrolled: HashSet::from([position]) }
     }
 
     pub fn patrol(&mut self, grid: &Grid) {
-        self.patrolled_with_direction.insert((self.position, self.direction));
-
         let next_position = self.position.move_towards(&self.direction);
 
         if !grid.is_inbound(&next_position) {

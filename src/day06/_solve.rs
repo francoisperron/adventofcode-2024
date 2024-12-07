@@ -28,7 +28,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // 3 secs on by old mbp
     fn solves_part2() {
         let input = daily_input(6);
         let mut map = Map::from(&input);
