@@ -21,6 +21,10 @@ impl Grid {
         self.elements.get(position).unwrap_or(&' ')
     }
     
+    pub fn set_element_at(&mut self, position: &Position, element: char) {
+        self.elements.insert(*position, element);
+    }
+    
     pub fn position_of(&self, element: &char) -> Option<Position> {
         self.elements.iter().find(|(_, v)| *v == element).map(|(position, _)| *position)
     }
