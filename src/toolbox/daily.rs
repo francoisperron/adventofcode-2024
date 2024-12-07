@@ -3,7 +3,7 @@ use std::env;
 pub fn daily_input(day: u32) -> String {
     match get_daily_input(day) {
         Ok(input) => input,
-        Err(err) => panic!("Failed to get daily input: {}", err)
+        Err(err) => panic!("Failed to get daily input: {}", err),
     }
 }
 

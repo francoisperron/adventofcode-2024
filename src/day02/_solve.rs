@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use crate::toolbox::daily::daily_input;
     use crate::day02::reports::Reports;
+    use crate::toolbox::daily::daily_input;
 
     #[test]
     fn solves_part1_example() {
@@ -17,7 +17,7 @@ mod tests {
 
         assert_eq!(reports.safe_count(), 502)
     }
-    
+
     #[test]
     fn solves_part2_example() {
         let reports = Reports::from(EXAMPLE);

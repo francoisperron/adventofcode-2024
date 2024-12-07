@@ -9,23 +9,22 @@ mod tests {
 
         assert_eq!(calibrations.solve(PART1_OPERATIONS), 3749)
     }
-    
+
     #[test]
     fn solves_part1() {
         let input = daily_input(7);
         let calibrations = Calibrations::from(&input);
-        
+
         assert_eq!(calibrations.solve(PART1_OPERATIONS), 850435817339)
     }
-    
+
     #[test]
     fn solves_part2_example() {
         let calibrations = Calibrations::from(EXAMPLE);
 
-        
         assert_eq!(calibrations.solve(PART2_OPERATIONS), 11387)
     }
-    
+
     #[test]
     fn solves_part2() {
         let input = daily_input(7);
@@ -36,7 +35,7 @@ mod tests {
 
     const PART1_OPERATIONS: &[Operation; 2] = &[Operation::Addition, Operation::Multiplication];
     const PART2_OPERATIONS: &[Operation; 3] = &[Operation::Addition, Operation::Multiplication, Operation::Combination];
-    
+
     const EXAMPLE: &str = "\
 190: 10 19
 3267: 81 40 27

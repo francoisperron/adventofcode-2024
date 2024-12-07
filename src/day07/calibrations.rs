@@ -1,5 +1,5 @@
 pub struct Calibrations {
-    calibrations: Vec<Calibration>
+    calibrations: Vec<Calibration>,
 }
 
 impl Calibrations {
@@ -7,9 +7,10 @@ impl Calibrations {
         let calibrations = input.lines().map(Calibration::from).collect();
         Calibrations { calibrations }
     }
-    
+
     pub fn solve(&self, operations: &[Operation]) -> usize {
-        self.calibrations.iter()
+        self.calibrations
+            .iter()
             .filter(|calibration| calibration.can_solve(operations))
             .map(|calibration| calibration.result)
             .sum()
@@ -18,18 +19,15 @@ impl Calibrations {
 
 pub struct Calibration {
     result: usize,
-    numbers: Vec<usize>
+    numbers: Vec<usize>,
 }
 
 impl Calibration {
     pub fn from(input: &str) -> Calibration {
         let (result, numbers) = input.split_once(": ").unwrap();
-        Calibration {
-            result: result.parse().unwrap(),
-            numbers: numbers.split_whitespace().map(|n| n.parse().unwrap()).collect()
-        }
+        Calibration { result: result.parse().unwrap(), numbers: numbers.split_whitespace().map(|n| n.parse().unwrap()).collect() }
     }
-    
+
     pub fn can_solve(&self, operations: &[Operation]) -> bool {
         self.try_to_solve(1, self.numbers[0], operations)
     }
@@ -39,19 +37,17 @@ impl Calibration {
             return result == self.result;
         }
 
-        operations
-            .iter()
-            .any(|operation| {
-                let new_result = operation.process(result, self.numbers[index]);
-                self.try_to_solve(index + 1, new_result, operations)
-            })
+        operations.iter().any(|operation| {
+            let new_result = operation.process(result, self.numbers[index]);
+            self.try_to_solve(index + 1, new_result, operations)
+        })
     }
 }
 
 pub enum Operation {
     Addition,
     Multiplication,
-    Combination
+    Combination,
 }
 
 impl Operation {
@@ -59,11 +55,10 @@ impl Operation {
         match self {
             Operation::Addition => a + b,
             Operation::Multiplication => a * b,
-            Operation::Combination => format!("{}{}", a, b).parse().unwrap()
+            Operation::Combination => format!("{}{}", a, b).parse().unwrap(),
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

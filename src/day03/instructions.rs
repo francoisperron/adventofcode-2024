@@ -11,7 +11,7 @@ impl Instructions {
         let multiplications = Self::parse_multiplications(input);
         let dos = Self::parse_dos(input);
         let donts = Self::parse_donts(input);
-        
+
         Instructions { multiplications, dos, donts }
     }
 
@@ -47,10 +47,7 @@ impl Instructions {
 
 impl Instructions {
     pub fn sum(&self) -> usize {
-        self.multiplications
-            .iter()
-            .map(|(_, a, b)| a * b)
-            .sum()
+        self.multiplications.iter().map(|(_, a, b)| a * b).sum()
     }
 
     pub fn enabled_sum(&self) -> usize {

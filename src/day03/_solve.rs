@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use crate::toolbox::daily::daily_input;
     use crate::day03::instructions::Instructions;
+    use crate::toolbox::daily::daily_input;
 
     #[test]
     fn solves_part1_example() {

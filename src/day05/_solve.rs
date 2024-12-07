@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use crate::toolbox::daily::daily_input;
     use crate::day05::manual_update::ManualUpdate;
+    use crate::toolbox::daily::daily_input;
 
     #[test]
     fn solves_part1_example() {
@@ -24,7 +24,7 @@ mod tests {
 
         assert_eq!(manual_update.fixed_invalid_updates_middle_page_sum(), 123);
     }
-    
+
     #[test]
     fn solves_part2() {
         let input = daily_input(5);
@@ -32,7 +32,7 @@ mod tests {
 
         assert_eq!(manual_update.fixed_invalid_updates_middle_page_sum(), 5184);
     }
-    
+
     const EXAMPLE: &str = "\
 47|53
 97|13

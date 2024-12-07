@@ -1,5 +1,5 @@
-use std::ops::{Add, Mul};
 use crate::toolbox::direction::Direction;
+use std::ops::{Add, Mul};
 
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Ord, PartialOrd)]
 pub struct Position {
@@ -13,16 +13,7 @@ impl Position {
     }
 
     pub fn around() -> [Position; 8] {
-        [
-            Position::new(-1, 1),
-            Position::new(0, 1),
-            Position::new(1, 1),
-            Position::new(-1, 0),
-            Position::new(1, 0),
-            Position::new(-1, -1),
-            Position::new(0, -1),
-            Position::new(1, -1),
-        ]
+        [Position::new(-1, 1), Position::new(0, 1), Position::new(1, 1), Position::new(-1, 0), Position::new(1, 0), Position::new(-1, -1), Position::new(0, -1), Position::new(1, -1)]
     }
 
     pub fn around_me(&self) -> [Position; 8] {

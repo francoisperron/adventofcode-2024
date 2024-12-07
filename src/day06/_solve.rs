@@ -24,15 +24,15 @@ mod tests {
     fn solves_part2_example() {
         let mut map = Map::from(EXAMPLE);
 
-       assert_eq!(map.obstructions_count(), 6)
+        assert_eq!(map.obstructions_count(), 6)
     }
-    
+
     #[test]
     #[ignore] // 3 secs on by old mbp
     fn solves_part2() {
         let input = daily_input(6);
         let mut map = Map::from(&input);
-        
+
         assert_eq!(map.obstructions_count(), 1951);
     }
 

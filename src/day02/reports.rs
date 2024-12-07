@@ -11,10 +11,7 @@ impl Reports {
 
 impl Reports {
     pub fn safe_count(&self) -> usize {
-        self.reports
-            .iter()
-            .filter(|report| report.is_safe())
-            .count()
+        self.reports.iter().filter(|report| report.is_safe()).count()
     }
 
     pub fn safe_count_with_problem_dampener(&self) -> usize {
@@ -31,10 +28,7 @@ pub struct Report {
 
 impl Report {
     pub fn from(line: &str) -> Report {
-        let levels = line
-            .split_whitespace()
-            .map(|value| value.parse().unwrap())
-            .collect();
+        let levels = line.split_whitespace().map(|value| value.parse().unwrap()).collect();
         Report { levels }
     }
 }
@@ -56,11 +50,10 @@ impl Report {
     }
 
     fn is_safe_with_problem_dampener(&self) -> bool {
-        (0..self.levels.len())
-            .any(|i| {
-                let mut dampened_levels = self.levels.clone();
-                dampened_levels.remove(i);
-                Report { levels: dampened_levels }.is_safe()
-            })
+        (0..self.levels.len()).any(|i| {
+            let mut dampened_levels = self.levels.clone();
+            dampened_levels.remove(i);
+            Report { levels: dampened_levels }.is_safe()
+        })
     }
 }

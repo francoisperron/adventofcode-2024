@@ -7,7 +7,7 @@ pub enum Direction {
 }
 
 impl Direction {
-    pub fn turn_right(&self) -> Direction{
+    pub fn turn_right(&self) -> Direction {
         match self {
             Direction::Up => Direction::Right,
             Direction::Right => Direction::Down,

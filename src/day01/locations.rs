@@ -24,17 +24,10 @@ impl Locations {
 
 impl Locations {
     pub fn total_distance(&self) -> usize {
-        self.left
-            .iter()
-            .zip(self.right.iter())
-            .map(|(l, r)| l.abs_diff(*r))
-            .sum()
+        self.left.iter().zip(self.right.iter()).map(|(l, r)| l.abs_diff(*r)).sum()
     }
 
     pub fn similarity_score(&self) -> usize {
-        self.left
-            .iter()
-            .map(|l| self.right.iter().filter(|r| *r == l).count() * l)
-            .sum()
+        self.left.iter().map(|l| self.right.iter().filter(|r| *r == l).count() * l).sum()
     }
 }

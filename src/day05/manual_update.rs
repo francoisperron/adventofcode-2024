@@ -9,21 +9,16 @@ pub struct ManualUpdate {
 impl ManualUpdate {
     pub fn from(input: &str) -> ManualUpdate {
         let (rules, updates) = input.split_once("\n\n").unwrap();
-        ManualUpdate { 
-            rules: Rules::from(rules), 
-            updates: updates.lines().map(Update::from).collect() 
-        }
+        ManualUpdate { rules: Rules::from(rules), updates: updates.lines().map(Update::from).collect() }
     }
 
     pub fn valid_updates_middle_page_sum(&self) -> usize {
-        self.updates.iter()
-            .filter(|u| u.is_in_order(&self.rules))
-            .map(|u| u.middle_page())
-            .sum()
+        self.updates.iter().filter(|u| u.is_in_order(&self.rules)).map(|u| u.middle_page()).sum()
     }
-    
+
     pub fn fixed_invalid_updates_middle_page_sum(&self) -> usize {
-        self.updates.iter()
+        self.updates
+            .iter()
             .filter(|u| !u.is_in_order(&self.rules))
             .map(|u| u.reorder(&self.rules))
             .map(|u| u.middle_page())
@@ -45,26 +40,20 @@ impl Update {
     pub fn is_in_order(&self, rules: &Rules) -> bool {
         self.updates.is_sorted_by(|page1, page2| rules.are_followed(page1, page2))
     }
-    
+
     pub fn reorder(&self, rules: &Rules) -> Update {
         let mut updates = self.updates.clone();
-        updates.sort_by(|page1, page2| {
-            if rules.are_followed(page1, page2) {
-                Ordering::Less
-            } else {
-                Ordering::Greater
-            }
-        });
-        Update { updates }         
+        updates.sort_by(|page1, page2| if rules.are_followed(page1, page2) { Ordering::Less } else { Ordering::Greater });
+        Update { updates }
     }
 
     pub fn middle_page(&self) -> usize {
-        *self.updates.get(self.updates.len()/2).unwrap()
+        *self.updates.get(self.updates.len() / 2).unwrap()
     }
 }
 
-pub struct Rules{
-    rules : HashMap::<usize, HashSet<usize>>
+pub struct Rules {
+    rules: HashMap<usize, HashSet<usize>>,
 }
 
 impl Rules {
@@ -76,7 +65,7 @@ impl Rules {
         }
         Rules { rules }
     }
-    
+
     pub fn are_followed(&self, page1: &usize, page2: &usize) -> bool {
         self.rules.contains_key(page2) && self.rules[page2].contains(page1)
     }
@@ -101,7 +90,7 @@ mod tests {
 
         assert!(!update.is_in_order(&rules))
     }
-    
+
     #[test]
     fn reorders_update() {
         let update = Update::from("1,2,3");

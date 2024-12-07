@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use crate::toolbox::daily::daily_input;
     use crate::day01::locations::Locations;
+    use crate::toolbox::daily::daily_input;
 
     #[test]
     fn solves_part1_example() {
@@ -24,12 +24,12 @@ mod tests {
 
         assert_eq!(locations.similarity_score(), 31)
     }
-    
+
     #[test]
     fn solves_part2() {
         let input = daily_input(1);
         let locations = Locations::from(&input);
-        
+
         assert_eq!(locations.similarity_score(), 21607792)
     }
 
