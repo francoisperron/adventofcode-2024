@@ -1,4 +1,5 @@
 use std::ops::{Add, Mul};
+use crate::toolbox::direction::Direction;
 
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Ord, PartialOrd)]
 pub struct Position {
@@ -27,6 +28,15 @@ impl Position {
     pub fn around_me(&self) -> [Position; 8] {
         Position::around().map(|d| Position::new(self.x + d.x, self.y + d.y))
     }
+
+    pub fn move_towards(&self, direction: &Direction) -> Position {
+        match direction {
+            Direction::Up => *self + Position::new(0, -1),
+            Direction::Down => *self + Position::new(0, 1),
+            Direction::Left => *self + Position::new(-1, 0),
+            Direction::Right => *self + Position::new(1, 0),
+        }
+    }
 }
 
 impl Add for Position {
@@ -40,14 +50,15 @@ impl Add for Position {
 impl Mul<usize> for Position {
     type Output = Position;
 
-    fn mul(self, rhs: usize) -> Self::Output {
-        Position::new(self.x * rhs as isize, self.y * rhs as isize)
+    fn mul(self, factor: usize) -> Self::Output {
+        Position::new(self.x * factor as isize, self.y * factor as isize)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day04::position::Position;
+    use crate::toolbox::direction::Direction;
+    use crate::toolbox::position::Position;
 
     #[test]
     fn adds_positions() {
@@ -56,6 +67,24 @@ mod tests {
         let p3 = Position::new(4, 6);
 
         assert_eq!(p1 + p2, p3);
+    }
+
+    #[test]
+    fn multiplies_by_factor() {
+        let p = Position::new(1, 2);
+        let p2 = p * 2;
+
+        assert_eq!(p2, Position::new(2, 4));
+    }
+
+    #[test]
+    fn moves_towards() {
+        let p = Position::new(1, 1);
+
+        assert_eq!(p.move_towards(&Direction::Up), Position::new(1, 0));
+        assert_eq!(p.move_towards(&Direction::Down), Position::new(1, 2));
+        assert_eq!(p.move_towards(&Direction::Left), Position::new(0, 1));
+        assert_eq!(p.move_towards(&Direction::Right), Position::new(2, 1));
     }
 
     #[test]

@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::daily::daily_input;
+    use crate::toolbox::daily::daily_input;
     use crate::day02::reports::Reports;
 
     #[test]

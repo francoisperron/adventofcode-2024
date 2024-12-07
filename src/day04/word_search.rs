@@ -1,5 +1,5 @@
-use crate::day04::grid::Grid;
-use crate::day04::position::Position;
+use crate::toolbox::Grid;
+use crate::toolbox::Position;
 
 pub struct WordSearch {
     grid: Grid,

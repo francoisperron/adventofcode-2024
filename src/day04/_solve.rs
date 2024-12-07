@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::daily::daily_input;
+    use crate::toolbox::daily::daily_input;
     use crate::day04::word_search::WordSearch;
 
     #[test]

@@ -1,4 +1,4 @@
-use crate::day04::position::Position;
+use crate::toolbox::position::Position;
 use std::collections::HashMap;
 
 pub struct Grid {
@@ -20,6 +20,10 @@ impl Grid {
     pub fn element_at(&self, position: &Position) -> &char {
         self.elements.get(position).unwrap_or(&' ')
     }
+    
+    pub fn position_of(&self, element: &char) -> Option<Position> {
+        self.elements.iter().find(|(_, v)| *v == element).map(|(position, _)| *position)
+    }
 
     pub fn is_inbound(&self, position: &Position) -> bool {
         position.x >= 0 && position.x < self.max_x && position.y >= 0 && position.y < self.max_y
@@ -29,8 +33,8 @@ impl Grid {
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
-    use crate::day04::grid::Grid;
-    use crate::day04::position::Position;
+    use crate::toolbox::grid::Grid;
+    use crate::toolbox::position::Position;
 
     #[test]
     fn creates_grid() {
