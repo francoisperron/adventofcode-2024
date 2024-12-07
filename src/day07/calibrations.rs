@@ -31,7 +31,7 @@ impl Calibration {
     }
     
     pub fn can_solve(&self, operations: &[Operation]) -> bool {
-        self.try_to_solve(0, 0, operations)
+        self.try_to_solve(1, self.numbers[0], operations)
     }
 
     fn try_to_solve(&self, index: usize, result: usize, operations: &[Operation]) -> bool {
@@ -58,7 +58,7 @@ impl Operation {
     fn process(&self, a: usize, b: usize) -> usize {
         match self {
             Operation::Addition => a + b,
-            Operation::Multiplication => if a == 0 { b } else { a * b },
+            Operation::Multiplication => a * b,
             Operation::Combination => format!("{}{}", a, b).parse().unwrap()
         }
     }
