@@ -1,5 +1,5 @@
 use crate::toolbox::position::Position;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 pub struct Grid {
     pub elements: HashMap<Position, char>,
@@ -34,13 +34,20 @@ impl Grid {
     pub fn is_inbound(&self, position: &Position) -> bool {
         position.x >= 0 && position.x < self.max_x && position.y >= 0 && position.y < self.max_y
     }
+
+    pub fn group_by_value(&self) -> HashMap<char, HashSet<Position>> {
+        self.elements.iter().fold(HashMap::new(), |mut grouping, (&position, &value)| {
+            grouping.entry(value).or_default().insert(position);
+            grouping
+        })
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::toolbox::grid::Grid;
     use crate::toolbox::position::Position;
-    use std::collections::HashMap;
+    use std::collections::{HashMap, HashSet};
 
     #[test]
     fn creates_grid() {
@@ -79,5 +86,16 @@ mod tests {
         assert!(!grid.is_inbound(&Position::new(0, -1)));
         assert!(!grid.is_inbound(&Position::new(2, 0)));
         assert!(!grid.is_inbound(&Position::new(0, 2)));
+    }
+
+    #[test]
+    fn groups_by_value() {
+        let grid = Grid::from("ab\nad");
+        let grouping = grid.group_by_value();
+
+        assert_eq!(
+            grouping,
+            HashMap::from([('a', HashSet::from([Position::new(0, 0), Position::new(0, 1)])), ('b', HashSet::from([Position::new(1, 0)])), ('d', HashSet::from([Position::new(1, 1)]))])
+        );
     }
 }

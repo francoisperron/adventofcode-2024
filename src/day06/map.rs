@@ -38,10 +38,9 @@ impl Map {
 
                 let mut seen = vec![vec![[false; 4]; self.grid.max_y as usize]; self.grid.max_x as usize];
                 self.guard = Guard::new(starting_position);
-                while self.grid.is_inbound(&self.guard.position) && !seen[self.guard.position.x as usize][self.guard.position.y as usize][self.guard.direction as usize]{
+                while self.grid.is_inbound(&self.guard.position) && !seen[self.guard.position.x as usize][self.guard.position.y as usize][self.guard.direction as usize] {
                     seen[self.guard.position.x as usize][self.guard.position.y as usize][self.guard.direction as usize] = true;
                     self.guard.patrol(&self.grid);
-
                 }
                 let is_a_cycle = self.grid.is_inbound(&self.guard.position);
 

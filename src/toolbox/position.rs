@@ -1,5 +1,5 @@
 use crate::toolbox::direction::Direction;
-use std::ops::{Add, Mul};
+use std::ops::{Add, Mul, Neg, Sub};
 
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Ord, PartialOrd)]
 pub struct Position {
@@ -38,6 +38,22 @@ impl Add for Position {
     }
 }
 
+impl Sub for Position {
+    type Output = Position;
+
+    fn sub(self, other: Self) -> Self::Output {
+        Position::new(self.x - other.x, self.y - other.y)
+    }
+}
+
+impl Neg for Position {
+    type Output = Position;
+
+    fn neg(self) -> Self::Output {
+        Position::new(-self.x, -self.y)
+    }
+}
+
 impl Mul<usize> for Position {
     type Output = Position;
 
@@ -58,6 +74,22 @@ mod tests {
         let p3 = Position::new(4, 6);
 
         assert_eq!(p1 + p2, p3);
+    }
+
+    #[test]
+    fn subtracts_positions() {
+        let p1 = Position::new(4, 6);
+        let p2 = Position::new(3, 4);
+        let p3 = Position::new(1, 2);
+
+        assert_eq!(p1 - p2, p3);
+    }
+
+    #[test]
+    fn negates_position() {
+        let p = Position::new(1, 2);
+
+        assert_eq!(-p, Position::new(-1, -2));
     }
 
     #[test]
