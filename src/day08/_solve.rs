@@ -5,7 +5,7 @@ mod tests {
 
     #[test]
     fn solves_part1_example() {
-        let mut antennas = Antennas::from(EXAMPLE);
+        let antennas = Antennas::from(EXAMPLE);
 
         assert_eq!(antennas.antinodes_count(), 14);
     }
@@ -13,14 +13,14 @@ mod tests {
     #[test]
     fn solves_part1() {
         let input = daily_input(8);
-        let mut antennas = Antennas::from(&input);
+        let antennas = Antennas::from(&input);
 
         assert_eq!(antennas.antinodes_count(), 228);
     }
 
     #[test]
     fn solves_part2_example() {
-        let mut antennas = Antennas::from(EXAMPLE);
+        let antennas = Antennas::from(EXAMPLE);
 
         assert_eq!(antennas.resonant_antinodes_count(), 34);
     }
@@ -28,7 +28,7 @@ mod tests {
     #[test]
     fn solves_part2() {
         let input = daily_input(8);
-        let mut antennas = Antennas::from(&input);
+        let antennas = Antennas::from(&input);
 
         assert_eq!(antennas.resonant_antinodes_count(), 766);
     }
