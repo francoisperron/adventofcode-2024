@@ -1,5 +1,7 @@
+use crate::day09::block::Block;
+
 pub struct Disk {
-    blocks: Vec<(String, usize)>,
+    blocks: Vec<Block>,
 }
 
 impl Disk {
@@ -9,8 +11,9 @@ impl Disk {
             .enumerate()
             .flat_map(|(i, c)| {
                 let size = c.to_digit(10).unwrap() as usize;
-                let value = if i % 2 == 0 { (i / 2).to_string() } else { ".".to_string() };
-                (0..size).map(|_| (value.to_string(), 1)).collect::<Vec<(String, usize)>>()
+                (0..size)
+                    .map(|_| if i % 2 == 0 { Block::new_data_block(i / 2, 1) } else { Block::new_free_block(1) })
+                    .collect::<Vec<Block>>()
             })
             .collect();
         Disk { blocks }
@@ -22,8 +25,11 @@ impl Disk {
             .enumerate()
             .map(|(i, c)| {
                 let size = c.to_digit(10).unwrap() as usize;
-                let value = if i % 2 == 0 { (i / 2).to_string() } else { ".".to_string() };
-                (value, size)
+                if i % 2 == 0 {
+                    Block::new_data_block(i / 2, size)
+                } else {
+                    Block::new_free_block(size)
+                }
             })
             .collect();
         Disk { blocks }
@@ -31,22 +37,19 @@ impl Disk {
 
     pub fn defrag(&self) -> Disk {
         let mut blocks = self.blocks.clone();
-        let mut block_index = blocks.len();
 
-        while block_index > 1 {
-            block_index -= 1;
-            let (id, size) = blocks[block_index].clone();
-            if id == "." {
+        for block_index in (1..blocks.len()).rev() {
+            let block = blocks[block_index];
+            if block.is_free() {
                 continue;
             }
 
-            if let Some(free_space_index) = blocks[..block_index].iter().position(|(id_free, space_free)| id_free == "." && *space_free >= size) {
-                let free_space = blocks[free_space_index].1;
-                blocks[free_space_index] = (id.clone(), size);
-                blocks[block_index] = (".".to_string(), size);
-
-                if size < free_space {
-                    blocks.insert(free_space_index + 1, (".".to_string(), free_space - size));
+            if let Some(free_space_index) = blocks[..block_index].iter().position(|b| b.is_free() && b.size >= block.size) {
+                let free_block = blocks[free_space_index];
+                blocks[free_space_index] = block;
+                blocks[block_index] = Block::new_free_block(block.size);
+                if block.size < free_block.size {
+                    blocks.insert(free_space_index + 1, Block::new_free_block(free_block.size - block.size));
                 }
             }
         }
@@ -57,18 +60,14 @@ impl Disk {
     pub fn checksum(&self) -> usize {
         self.blocks
             .iter()
-            .flat_map(|(id, size)| (0..*size).map(move |_| id))
+            .flat_map(|block| (0..block.size).map(move |_| block))
             .enumerate()
-            .map(|(index, id)| if id == "." { 0 } else { index * id.parse::<usize>().unwrap() })
+            .map(|(index, block)| block.checksum(index))
             .sum()
     }
 
     pub fn print(&self) -> String {
-        self.blocks
-            .iter()
-            .flat_map(|(v, size)| vec![v.to_string(); *size])
-            .collect::<Vec<String>>()
-            .join("")
+        self.blocks.iter().map(|block| block.print()).collect::<Vec<String>>().join("")
     }
 }
 
