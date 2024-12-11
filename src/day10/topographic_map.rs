@@ -24,15 +24,16 @@ impl TopographicMap {
     pub fn trailheads(&self) -> impl Iterator<Item = (Position, usize)> + '_ {
         self.trailheads.iter().flat_map(|p| {
             let mut hiked: HashMap<Position, usize> = HashMap::new();
-            self.hike(p, &mut hiked)
+            self.hike(p, &mut hiked);
+            hiked.into_iter()
         })
     }
 
-    pub fn hike(&self, current: &Position, hiked: &mut HashMap<Position, usize>) -> HashMap<Position, usize> {
+    pub fn hike(&self, current: &Position, hiked: &mut HashMap<Position, usize>) {
         let current_value = self.grid.element_at(current).to_digit(10).unwrap();
         if current_value == 9 {
             hiked.insert(*current, hiked.get(current).unwrap_or(&0) + 1);
-            return hiked.clone();
+            return;
         }
 
         current
@@ -40,7 +41,6 @@ impl TopographicMap {
             .iter()
             .filter(|p| self.grid.is_inbound(p))
             .filter(|p| self.grid.element_at(p).to_digit(10).unwrap() == current_value + 1)
-            .flat_map(|p| self.hike(p, hiked))
-            .collect()
+            .for_each(|p| self.hike(p, hiked));
     }
 }
