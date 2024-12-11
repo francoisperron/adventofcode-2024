@@ -17,15 +17,15 @@ impl TopographicMap {
             .iter()
             .map(|p| {
                 let mut hiked: HashSet<Position> = HashSet::new();
-                self.hike(p, &mut hiked)
+                self.hike(p, &mut hiked, false)
             })
             .sum()
     }
 
-    pub fn hike(&self, current: &Position, hiked: &mut HashSet<Position>) -> usize {
+    pub fn hike(&self, current: &Position, hiked: &mut HashSet<Position>, rating: bool) -> usize {
         let current_value = self.grid.element_at(current).to_digit(10).unwrap();
         if current_value == 9 {
-            return if hiked.insert(*current) { 1 } else { 0 };
+            return if hiked.insert(*current) { 1 } else if rating {1} else {0};
         }
 
         current
@@ -33,7 +33,19 @@ impl TopographicMap {
             .iter()
             .filter(|p| self.grid.is_inbound(p))
             .filter(|p| self.grid.element_at(p).to_digit(10).unwrap() == current_value + 1)
-            .map(|p| self.hike(p, hiked))
+            .map(|p| self.hike(p, hiked, rating))
+            .sum()
+    }
+    
+    pub fn trailheads_ratings(&self) -> usize {
+        let trailheads = self.grid.elements.iter().filter(|(_, &v)| v == '0').map(|(&p, _)| p).collect::<Vec<Position>>();
+
+        trailheads
+            .iter()
+            .map(|p| {
+                let mut hiked: HashSet<Position> = HashSet::new();
+                self.hike(p, &mut hiked, true)
+            })
             .sum()
     }
 }
