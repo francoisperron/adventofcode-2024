@@ -38,9 +38,8 @@ impl TopographicMap {
 
         current
             .around_me_4()
-            .iter()
             .filter(|p| self.grid.is_inbound(p))
             .filter(|p| self.grid.element_at(p).to_digit(10).unwrap() == current_value + 1)
-            .for_each(|p| self.hike(p, hiked));
+            .for_each(|p| self.hike(&p, hiked));
     }
 }

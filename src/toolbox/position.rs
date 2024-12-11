@@ -16,16 +16,16 @@ impl Position {
         [Position::new(-1, 1), Position::new(0, 1), Position::new(1, 1), Position::new(-1, 0), Position::new(1, 0), Position::new(-1, -1), Position::new(0, -1), Position::new(1, -1)]
     }
 
-    pub fn around_me(&self) -> [Position; 8] {
-        Position::around().map(|d| Position::new(self.x + d.x, self.y + d.y))
+    pub fn around_me(&self) -> impl Iterator<Item = Position> {
+        Position::around().map(|d| Position::new(self.x + d.x, self.y + d.y)).into_iter()
     }
 
     pub fn around_4() -> [Position; 4] {
         [Position::new(0, 1), Position::new(-1, 0), Position::new(1, 0), Position::new(0, -1)]
     }
 
-    pub fn around_me_4(&self) -> [Position; 4] {
-        Position::around_4().map(|d| Position::new(self.x + d.x, self.y + d.y))
+    pub fn around_me_4(&self) -> impl Iterator<Item = Position> {
+        Position::around_4().map(|d| Position::new(self.x + d.x, self.y + d.y)).into_iter()
     }
 
     pub fn move_towards(&self, direction: &Direction) -> Position {
@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn gets_positions_around() {
         let p = Position::new(1, 1);
-        let around = p.around_me();
+        let around = p.around_me().collect::<Vec<Position>>();
 
         assert_eq!(around.len(), 8);
         assert_eq!(around[0], Position::new(1 - 1, 1 + 1));
@@ -132,5 +132,17 @@ mod tests {
         assert_eq!(around[5], Position::new(1 - 1, 1 - 1));
         assert_eq!(around[6], Position::new(1, 1 - 1));
         assert_eq!(around[7], Position::new(1 + 1, 1 - 1));
+    }
+
+    #[test]
+    fn gets_4_positions_around() {
+        let p = Position::new(1, 1);
+        let around = p.around_me_4().collect::<Vec<Position>>();
+
+        assert_eq!(around.len(), 4);
+        assert_eq!(around[0], Position::new(1, 1 + 1));
+        assert_eq!(around[1], Position::new(1 - 1, 1));
+        assert_eq!(around[2], Position::new(1 + 1, 1));
+        assert_eq!(around[3], Position::new(1, 1 - 1));
     }
 }
