@@ -48,8 +48,8 @@ impl Stone {
         match self.number {
             0 => vec![Stone::new(1)],
             _n if number_as_string.len() % 2 == 0 => {
-                let (low, high) = number_as_string.split_at(number_as_string.len() / 2);
-                vec![Stone::new(low.parse().unwrap()), Stone::new(high.parse().unwrap())]
+                let (high, low) = number_as_string.split_at(number_as_string.len() / 2);
+                vec![Stone::new(high.parse().unwrap()), Stone::new(low.parse().unwrap())]
             }
             _ => vec![Stone::new(self.number * 2024)],
         }
