@@ -20,6 +20,14 @@ impl Position {
         Position::around().map(|d| Position::new(self.x + d.x, self.y + d.y))
     }
 
+    pub fn around_4() -> [Position; 4] {
+        [Position::new(0, 1), Position::new(-1, 0), Position::new(1, 0), Position::new(0, -1)]
+    }
+
+    pub fn around_me_4(&self) -> [Position; 4] {
+        Position::around_4().map(|d| Position::new(self.x + d.x, self.y + d.y))
+    }
+
     pub fn move_towards(&self, direction: &Direction) -> Position {
         match direction {
             Direction::Up => *self + Position::new(0, -1),
