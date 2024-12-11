@@ -1,31 +1,38 @@
 use crate::toolbox::{Grid, Position};
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 pub struct TopographicMap {
     grid: Grid,
+    trailheads: Vec<Position>,
 }
 
 impl TopographicMap {
     pub fn from(input: &str) -> Self {
-        Self { grid: Grid::from(input) }
+        let grid = Grid::from(input);
+        let trailheads = grid.elements.iter().filter(|(_, &v)| v == '0').map(|(&p, _)| p).collect::<Vec<Position>>();
+        Self { grid, trailheads }
     }
 
     pub fn trailheads_score(&self) -> usize {
-        let trailheads = self.grid.elements.iter().filter(|(_, &v)| v == '0').map(|(&p, _)| p).collect::<Vec<Position>>();
-
-        trailheads
-            .iter()
-            .map(|p| {
-                let mut hiked: HashSet<Position> = HashSet::new();
-                self.hike(p, &mut hiked, false)
-            })
-            .sum()
+        self.trailheads().count()
     }
 
-    pub fn hike(&self, current: &Position, hiked: &mut HashSet<Position>, rating: bool) -> usize {
+    pub fn trailheads_ratings(&self) -> usize {
+        self.trailheads().map(|(_, v)| v).sum()
+    }
+
+    pub fn trailheads(&self) -> impl Iterator<Item = (Position, usize)> + '_ {
+        self.trailheads.iter().flat_map(|p| {
+            let mut hiked: HashMap<Position, usize> = HashMap::new();
+            self.hike(p, &mut hiked)
+        })
+    }
+
+    pub fn hike(&self, current: &Position, hiked: &mut HashMap<Position, usize>) -> HashMap<Position, usize> {
         let current_value = self.grid.element_at(current).to_digit(10).unwrap();
         if current_value == 9 {
-            return if hiked.insert(*current) { 1 } else if rating {1} else {0};
+            hiked.insert(*current, hiked.get(current).unwrap_or(&0) + 1);
+            return hiked.clone();
         }
 
         current
@@ -33,19 +40,7 @@ impl TopographicMap {
             .iter()
             .filter(|p| self.grid.is_inbound(p))
             .filter(|p| self.grid.element_at(p).to_digit(10).unwrap() == current_value + 1)
-            .map(|p| self.hike(p, hiked, rating))
-            .sum()
-    }
-    
-    pub fn trailheads_ratings(&self) -> usize {
-        let trailheads = self.grid.elements.iter().filter(|(_, &v)| v == '0').map(|(&p, _)| p).collect::<Vec<Position>>();
-
-        trailheads
-            .iter()
-            .map(|p| {
-                let mut hiked: HashSet<Position> = HashSet::new();
-                self.hike(p, &mut hiked, true)
-            })
-            .sum()
+            .flat_map(|p| self.hike(p, hiked))
+            .collect()
     }
 }

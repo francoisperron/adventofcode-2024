@@ -24,7 +24,7 @@ mod tests {
 
         assert_eq!(map.trailheads_ratings(), 81);
     }
-    
+
     #[test]
     fn solves_part2() {
         let input = daily_input(10);
