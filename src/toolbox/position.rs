@@ -36,6 +36,13 @@ impl Position {
             Direction::Right => *self + Position::new(1, 0),
         }
     }
+
+    pub fn corner(&self, direction: &Direction) -> (Position, Position, Position) {
+        let corner_3 = self.move_towards(direction);
+        let corner_2 = corner_3.move_towards(&direction.turn_left());
+        let corner_1 = corner_2.move_towards(&direction.turn_left().turn_left());
+        (corner_1, corner_2, corner_3)
+    }
 }
 
 impl Add for Position {
@@ -144,5 +151,29 @@ mod tests {
         assert_eq!(around[1], Position::new(1 - 1, 1));
         assert_eq!(around[2], Position::new(1 + 1, 1));
         assert_eq!(around[3], Position::new(1, 1 - 1));
+    }
+
+    #[test]
+    fn gets_up_corner() {
+        let p = Position::new(0, 0);
+        let (corner_1, corner_2, corner_3) = p.corner(&Direction::Up);
+
+        // c2 c3
+        // c1 p
+        assert_eq!(corner_1, Position::new(-1, 0));
+        assert_eq!(corner_2, Position::new(-1, -1));
+        assert_eq!(corner_3, Position::new(0, -1));
+    }
+
+    #[test]
+    fn gets_left_corner() {
+        let p = Position::new(0, 0);
+        let (corner_1, corner_2, corner_3) = p.corner(&Direction::Left);
+
+        // c3 p
+        // c2 c1
+        assert_eq!(corner_1, Position::new(0, 1));
+        assert_eq!(corner_2, Position::new(-1, 1));
+        assert_eq!(corner_3, Position::new(-1, 0));
     }
 }
