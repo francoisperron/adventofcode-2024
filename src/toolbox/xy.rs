@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul};
+use std::ops::{Add, Mul, Rem};
 
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Ord, PartialOrd)]
 pub struct XY {
@@ -30,6 +30,14 @@ impl Mul<isize> for XY {
     }
 }
 
+impl Rem for XY {
+    type Output = Self;
+
+    fn rem(self, other: Self) -> Self::Output {
+        Self { x: ((self.x % other.x) + other.x) % other.x, y: ((self.y % other.y) + other.y) % other.y }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::toolbox::xy::XY;
@@ -55,5 +63,13 @@ mod tests {
         let xy = XY::new((1, 2));
 
         assert_eq!(xy * 2, XY::new((2, 4)));
+    }
+
+    #[test]
+    fn modulo_xy() {
+        let xy = XY::new((11, 23));
+        let xy2 = XY::new((2, 5));
+
+        assert_eq!(xy % xy2, XY::new((1, 3)));
     }
 }
