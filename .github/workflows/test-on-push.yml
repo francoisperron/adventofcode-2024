@@ -24,6 +24,10 @@ jobs:
         run: |
           cargo clippy -- -Dwarnings
 
+      - name: Format check
+        run: |
+          cargo fmt --check
+
       - name: Test
         run: |
-          AOC_SESSION=${{ secrets.AOC_SESSION }} cargo test --release
+          AOC_SESSION=${{ secrets.AOC_SESSION }} cargo test --release --quiet

@@ -11,7 +11,7 @@ pub struct Map {
 impl Map {
     pub fn from(input: &str) -> Map {
         let grid = Grid::from(input);
-        let guard = Guard::new(grid.position_of(&'^').unwrap());
+        let guard = Guard::new(grid.position_of('^').unwrap());
         Map { grid, guard }
     }
 

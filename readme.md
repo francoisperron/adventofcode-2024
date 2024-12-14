@@ -7,5 +7,5 @@ https://adventofcode.com/2024
 To run tests:
 
 ``` bash
-AOC_SESSION={session} cargo test
+AOC_SESSION={session} cargo test --release --quiet
 ```

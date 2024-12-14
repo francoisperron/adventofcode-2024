@@ -27,8 +27,8 @@ impl Grid {
         self.elements.insert(*position, element);
     }
 
-    pub fn position_of(&self, element: &char) -> Option<Position> {
-        self.elements.iter().find(|(_, v)| *v == element).map(|(position, _)| *position)
+    pub fn position_of(&self, element: char) -> Option<Position> {
+        self.elements.iter().find(|(_, &v)| v == element).map(|(position, _)| *position)
     }
 
     pub fn is_inbound(&self, position: &Position) -> bool {
