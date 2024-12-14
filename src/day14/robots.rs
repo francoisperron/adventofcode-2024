@@ -47,6 +47,16 @@ impl Robots {
         }
         unreachable!();
     }
+
+    pub fn print_xmas_tree(&self) {
+        for y in 0..self.size.y {
+            for x in 0..self.size.x {
+                let is_robot = self.robots.iter().any(|r| r.pos == XY::new((x, y)));
+                print!("{}", if is_robot { "#" } else { "." });
+            }
+            println!();
+        }
+    }
 }
 
 #[derive(Debug)]

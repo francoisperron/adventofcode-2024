@@ -26,7 +26,9 @@ mod tests {
         let input = daily_input(14);
         let mut robots = Robots::from(&input, XY::new((101, 103)));
 
-        assert_eq!(robots.moves_for_easter_egg(), 7383);
+        let moves = robots.moves_for_easter_egg();
+        // robots.print_xmas_tree();
+        assert_eq!(moves, 7383);
     }
 
     const EXAMPLE: &str = "\
