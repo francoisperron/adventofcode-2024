@@ -31,6 +31,10 @@ impl Grid {
         self.elements.iter().find(|(_, &v)| v == element).map(|(position, _)| *position)
     }
 
+    pub fn positions_of(&self, element: char) -> impl Iterator<Item = Position> + '_ {
+        self.elements.iter().filter(move |(_, &v)| v == element).map(|(position, _)| *position)
+    }
+
     pub fn is_inbound(&self, position: &Position) -> bool {
         position.x >= 0 && position.x < self.max_x && position.y >= 0 && position.y < self.max_y
     }
@@ -40,6 +44,22 @@ impl Grid {
             grouping.entry(value).or_default().insert(position);
             grouping
         })
+    }
+
+    pub fn swap_elements(&mut self, position1: &Position, position2: &Position) {
+        let element1 = *self.element_at(position1);
+        let element2 = *self.element_at(position2);
+        self.set_element_at(position1, element2);
+        self.set_element_at(position2, element1);
+    }
+
+    pub fn print(&self) {
+        for y in 0..self.max_y {
+            for x in 0..self.max_x {
+                print!("{}", self.element_at(&Position::new(x, y)));
+            }
+            println!();
+        }
     }
 }
 
@@ -97,5 +117,14 @@ mod tests {
             grouping,
             HashMap::from([('a', HashSet::from([Position::new(0, 0), Position::new(0, 1)])), ('b', HashSet::from([Position::new(1, 0)])), ('d', HashSet::from([Position::new(1, 1)]))])
         );
+    }
+
+    #[test]
+    fn swaps_elements() {
+        let mut grid = Grid::from("ab");
+        grid.swap_elements(&Position::new(0, 0), &Position::new(1, 0));
+
+        assert_eq!(grid.element_at(&Position::new(0, 0)), &'b');
+        assert_eq!(grid.element_at(&Position::new(1, 0)), &'a');
     }
 }

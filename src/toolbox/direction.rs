@@ -11,6 +11,16 @@ impl Direction {
         [Direction::Up, Direction::Right, Direction::Down, Direction::Left]
     }
 
+    pub fn from(value: char) -> Direction {
+        match value {
+            '^' => Direction::Up,
+            'v' => Direction::Down,
+            '>' => Direction::Right,
+            '<' => Direction::Left,
+            _ => panic!("Invalid direction: {}", value),
+        }
+    }
+
     pub fn turn_right(self) -> Direction {
         match self {
             Direction::Up => Direction::Right,
@@ -33,6 +43,14 @@ impl Direction {
 #[cfg(test)]
 mod tests {
     use crate::toolbox::direction::Direction;
+
+    #[test]
+    fn directions_from_char() {
+        assert_eq!(Direction::from('^'), Direction::Up);
+        assert_eq!(Direction::from('v'), Direction::Down);
+        assert_eq!(Direction::from('>'), Direction::Right);
+        assert_eq!(Direction::from('<'), Direction::Left);
+    }
 
     #[test]
     fn turns_right() {
