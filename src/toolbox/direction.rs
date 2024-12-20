@@ -38,6 +38,15 @@ impl Direction {
             Direction::Right => Direction::Up,
         }
     }
+
+    pub fn reverse(self) -> Direction {
+        match self {
+            Direction::Up => Direction::Down,
+            Direction::Left => Direction::Right,
+            Direction::Down => Direction::Up,
+            Direction::Right => Direction::Left,
+        }
+    }
 }
 
 #[cfg(test)]
