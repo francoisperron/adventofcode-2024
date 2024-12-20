@@ -49,7 +49,7 @@ impl Maze {
                 if !self.grid.is_inbound(&new_pos) || self.grid.element_at(&new_pos) == &'#' {
                     continue;
                 }
-                
+
                 let turn_cost = if new_dir == direction { 0 } else { 1000 };
                 let new_cost = cost + 1 + turn_cost;
 
