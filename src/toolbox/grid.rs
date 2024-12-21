@@ -8,6 +8,10 @@ pub struct Grid {
 }
 
 impl Grid {
+    pub fn new(max_x: isize, max_y: isize) -> Grid {
+        Grid { elements: HashMap::new(), max_x, max_y }
+    }
+
     pub fn from(input: &str) -> Grid {
         let elements = input
             .lines()
@@ -20,7 +24,7 @@ impl Grid {
     }
 
     pub fn element_at(&self, position: &Position) -> &char {
-        self.elements.get(position).unwrap_or(&' ')
+        self.elements.get(position).unwrap_or(&'.')
     }
 
     pub fn set_element_at(&mut self, position: &Position, element: char) {
@@ -90,7 +94,7 @@ mod tests {
     fn gets_empty_when_element_not_found() {
         let grid = Grid::from("ab\ncd");
 
-        assert_eq!(grid.element_at(&Position::new(2, 2)), &' ');
+        assert_eq!(grid.element_at(&Position::new(2, 2)), &'.');
     }
 
     #[test]

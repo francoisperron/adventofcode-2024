@@ -1,4 +1,5 @@
 use crate::toolbox::direction::Direction;
+use itertools::Itertools;
 use std::ops::{Add, Mul, Neg, Sub};
 
 #[derive(Eq, PartialEq, Hash, Debug, Clone, Copy, Ord, PartialOrd)]
@@ -9,6 +10,11 @@ pub struct Position {
 
 impl Position {
     pub fn new(x: isize, y: isize) -> Position {
+        Position { x, y }
+    }
+
+    pub fn from(input: &str) -> Position {
+        let (x, y) = input.split(',').map(|part| part.parse::<isize>().unwrap()).collect_tuple().unwrap();
         Position { x, y }
     }
 
