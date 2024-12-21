@@ -1,4 +1,4 @@
-use regex::Regex;
+use std::collections::HashMap;
 
 pub struct Towels {
     towels: Vec<String>,
@@ -14,7 +14,44 @@ impl Towels {
     }
 
     pub fn possible_designs(&self) -> usize {
-        let towels_regex = Regex::new(&format!("^({})*$", self.towels.join("|"))).unwrap();
-        self.designs.iter().filter(|design| towels_regex.is_match(design)).count()
+        self.designs.iter().filter(|design| self.possible_ways(design, &mut Cache::default()) > 0).count()
+    }
+
+    pub fn all_possible_designs(&self) -> usize {
+        self.designs.iter().map(|design| self.possible_ways(design, &mut Cache::default())).sum()
+    }
+
+    fn possible_ways(&self, design: &str, cache: &mut Cache) -> usize {
+        if design.is_empty() {
+            return 1;
+        }
+
+        if let Some(&ways) = cache.get(design) {
+            return ways;
+        }
+
+        let mut ways = 0;
+        for towel in self.towels.iter() {
+            if design.starts_with(towel) {
+                let remaining_design = &design[towel.len()..];
+                ways += self.possible_ways(remaining_design, cache);
+            }
+        }
+
+        cache.put(design, ways);
+        ways
+    }
+}
+
+#[derive(Default)]
+struct Cache(HashMap<String, usize>);
+
+impl Cache {
+    pub fn put(&mut self, pattern: &str, ways: usize) {
+        self.0.insert(pattern.to_string(), ways);
+    }
+
+    pub fn get(&self, pattern: &str) -> Option<&usize> {
+        self.0.get(pattern)
     }
 }
