@@ -10,7 +10,7 @@ mod tests {
         let input = daily_input(20);
         let race = RaceComplex::from(&input);
 
-        let cheats = race.cheat(|cheats: i32| cheats == 2);
+        let cheats = race.cheat(|cheats| cheats == 2);
 
         assert_eq!(cheats, 1343);
     }
@@ -20,7 +20,7 @@ mod tests {
         let input = daily_input(20);
         let race = RaceComplex::from(&input);
 
-        let cheats = race.cheat(|cheats: i32| cheats < 21);
+        let cheats = race.cheat(|cheats| cheats < 21);
 
         assert_eq!(cheats, 982891);
     }
