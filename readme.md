@@ -1,4 +1,5 @@
 [![Test](https://github.com/francoisperron/adventofcode-2024/actions/workflows/test-on-push.yml/badge.svg)](https://github.com/francoisperron/adventofcode-2024/actions/workflows/test-on-push.yml)
+[![Dependencies](https://deps.rs/repo/github/francoisperron/adventofcode-2024/status.svg?subject=Dependencies)](https://deps.rs/repo/github/francoisperron/adventofcode-2024)
 
 ## 🎄⛄️ Advent of code 2024 ⛄🎄
 
