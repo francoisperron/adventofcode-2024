@@ -1,41 +1,27 @@
-mod race;
+mod race_complex;
 
 #[cfg(test)]
 mod tests {
-    use crate::day20::race::Race;
+    use crate::day20::race_complex::RaceComplex;
     use crate::toolbox::daily::daily_input;
 
     #[test]
-    fn solves_part1_example() {
-        let mut race = Race::from(EXAMPLE);
+    fn solves_part1() {
+        let input = daily_input(20);
+        let race = RaceComplex::from(&input);
 
-        assert_eq!(race.cheats_over(1), 44);
-        assert_eq!(race.cheats_over(50), 1);
+        let cheats = race.cheat(|cheats: i32| cheats == 2);
+
+        assert_eq!(cheats, 1343);
     }
 
     #[test]
-    #[ignore] // 20 secs on my mbp
-    fn solves_part1() {
+    fn solves_part2() {
         let input = daily_input(20);
-        let mut race = Race::from(&input);
+        let race = RaceComplex::from(&input);
 
-        assert_eq!(race.cheats_over(100), 1343);
+        let cheats = race.cheat(|cheats: i32| cheats < 21);
+
+        assert_eq!(cheats, 982891);
     }
-
-    const EXAMPLE: &str = "\
-###############
-#...#...#.....#
-#.#.#.#.#.###.#
-#S#...#.#.#...#
-#######.#.#.###
-#######.#.#...#
-#######.#.###.#
-###..E#...#...#
-###.#######.###
-#...###...#...#
-#.#####.#.###.#
-#.#...#.#.#...#
-#.#.#.#.#.#.###
-#...#...#...###
-###############";
 }

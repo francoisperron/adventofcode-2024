@@ -49,6 +49,10 @@ impl Position {
         let corner_1 = corner_2.move_towards(&direction.turn_left().turn_left());
         (corner_1, corner_2, corner_3)
     }
+
+    pub fn manhattan_distance(&self, other: &Position) -> usize {
+        (self.x - other.x).unsigned_abs() + (self.y - other.y).unsigned_abs()
+    }
 }
 
 impl Add for Position {
@@ -181,5 +185,14 @@ mod tests {
         assert_eq!(corner_1, Position::new(0, 1));
         assert_eq!(corner_2, Position::new(-1, 1));
         assert_eq!(corner_3, Position::new(-1, 0));
+    }
+
+    #[test]
+    fn calculates_manhattan_distance() {
+        let p1 = Position::new(10, 1);
+        let p2 = Position::new(20, 2);
+
+        assert_eq!(p1.manhattan_distance(&p2), 11);
+        assert_eq!(p2.manhattan_distance(&p1), 11);
     }
 }
