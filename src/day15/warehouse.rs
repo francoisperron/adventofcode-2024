@@ -47,8 +47,8 @@ impl Warehouse {
         for direction in self.moves.clone() {
             match self.move_object(&robot_position, &direction) {
                 Some(moves) => {
-                    moves.iter().for_each(|(from, _, _)| self.grid.set_element_at(from, '.'));
-                    moves.iter().for_each(|(_, to, value)| self.grid.set_element_at(to, *value));
+                    moves.iter().for_each(|m| self.grid.set_element_at(&m.0, '.'));
+                    moves.iter().for_each(|m| self.grid.set_element_at(&m.1, m.2));
                     robot_position = robot_position.move_towards(&direction);
                 }
                 None => continue,
@@ -56,62 +56,52 @@ impl Warehouse {
         }
     }
 
-    fn move_object(&mut self, position: &Position, direction: &Direction) -> Option<Vec<(Position, Position, char)>> {
+    fn move_object(&mut self, position: &Position, direction: &Direction) -> Option<Vec<Move>> {
         let next_position = &position.move_towards(direction);
-        let mut moves = Vec::from([(*position, *next_position, *self.grid.element_at(position))]);
+        let mut moves = Vec::from([Move(*position, *next_position, *self.grid.element_at(position))]);
 
         match *self.grid.element_at(next_position) {
             WALL => None,
             FREE_SPACE => Some(moves),
-            BOX => {
-                if let Some(new_moves) = self.move_object(next_position, direction) {
-                    moves.extend(&new_moves);
-                    Some(moves)
-                } else {
-                    None
-                }
-            }
+            BOX => self.move_box(direction, next_position, &mut moves),
             BIG_BOX_START => {
                 if direction == &Direction::Left || direction == &Direction::Right {
-                    if let Some(new_moves) = self.move_object(next_position, direction) {
-                        moves.extend(&new_moves);
-                        Some(moves)
-                    } else {
-                        None
-                    }
+                    self.move_box(direction, next_position, &mut moves)
                 } else {
                     let start_moves = self.move_object(next_position, direction);
                     let end_moves = self.move_object(&next_position.move_towards(&Direction::Right), direction);
-                    if let (Some(start_moves), Some(end_moves)) = (start_moves, end_moves) {
-                        moves.extend(&start_moves);
-                        moves.extend(&end_moves);
-                        Some(moves)
-                    } else {
-                        None
-                    }
+                    Self::move_big_box_vertically(start_moves, end_moves, &mut moves)
                 }
             }
             BIG_BOX_END => {
                 if direction == &Direction::Left || direction == &Direction::Right {
-                    if let Some(new_moves) = self.move_object(next_position, direction) {
-                        moves.extend(&new_moves);
-                        Some(moves)
-                    } else {
-                        None
-                    }
+                    self.move_box(direction, next_position, &mut moves)
                 } else {
                     let start_moves = self.move_object(&next_position.move_towards(&Direction::Left), direction);
                     let end_moves = self.move_object(next_position, direction);
-                    if let (Some(start_moves), Some(end_moves)) = (start_moves, end_moves) {
-                        moves.extend(&end_moves);
-                        moves.extend(&start_moves);
-                        Some(moves)
-                    } else {
-                        None
-                    }
+                    Self::move_big_box_vertically(start_moves, end_moves, &mut moves)
                 }
             }
             _ => panic!("Invalid object"),
+        }
+    }
+
+    fn move_box(&mut self, direction: &Direction, next_position: &Position, moves: &mut Vec<Move>) -> Option<Vec<Move>> {
+        if let Some(new_moves) = self.move_object(next_position, direction) {
+            moves.extend(new_moves);
+            Some(moves.clone())
+        } else {
+            None
+        }
+    }
+
+    fn move_big_box_vertically(start_moves: Option<Vec<Move>>, end_moves: Option<Vec<Move>>, moves: &mut Vec<Move>) -> Option<Vec<Move>> {
+        if let (Some(start_moves), Some(end_moves)) = (start_moves, end_moves) {
+            moves.extend(start_moves);
+            moves.extend(end_moves);
+            Some(moves.clone())
+        } else {
+            None
         }
     }
 
@@ -121,6 +111,9 @@ impl Warehouse {
         boxes + big_boxes
     }
 }
+
+#[derive(Debug, Clone, Copy)]
+pub struct Move(Position, Position, char);
 
 #[cfg(test)]
 mod tests {
