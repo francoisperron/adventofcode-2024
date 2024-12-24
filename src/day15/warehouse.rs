@@ -58,11 +58,11 @@ impl Warehouse {
     fn move_object(&mut self, position: &Position, direction: &Direction) -> Option<Vec<(Position, Position)>> {
         let next_position = &position.move_towards(direction);
         let mut moves = vec![(*position, *next_position)];
-        
+
         match *self.grid.element_at(next_position) {
             WALL => None,
             FREE_SPACE => Some(moves),
-            BOX => {
+            BOX | BIG_BOX_START | BIG_BOX_END => {
                 if let Some(new_moves) = self.move_object(next_position, direction) {
                     moves.extend(&new_moves);
                     Some(moves)
@@ -90,7 +90,6 @@ mod tests {
     fn creates_wider_warehouse() {
         let warehouse = Warehouse::wider(SIMPLE_2);
 
-        warehouse.grid.print();
         assert_eq!(warehouse.grid.max_x, 14);
         assert_eq!(warehouse.grid.max_y, 7);
     }
@@ -100,5 +99,57 @@ mod tests {
         let warehouse = Warehouse::wider(SIMPLE_2);
 
         assert_eq!(warehouse.boxes_sum(), 306 + 308 + 406);
+    }
+
+    #[test]
+    fn moves_big_boxes_left() {
+        let input = "\
+##############
+##..........##
+##..........##
+##.[][]@....##
+##..........##
+##..........##
+##############
+
+<<";
+        let mut warehouse = Warehouse::from(input);
+        warehouse.move_robot();
+
+        let expected = "\
+##############
+##..........##
+##..........##
+##[][]@.....##
+##..........##
+##..........##
+##############";
+        assert_eq!(warehouse.grid.print(), expected);
+    }
+
+    #[test]
+    fn moves_big_boxes_right() {
+        let input = "\
+##############
+##..........##
+##..........##
+##....@[][].##
+##..........##
+##..........##
+##############
+
+>>";
+        let mut warehouse = Warehouse::from(input);
+        warehouse.move_robot();
+
+        let expected = "\
+##############
+##..........##
+##..........##
+##.....@[][]##
+##..........##
+##..........##
+##############";
+        assert_eq!(warehouse.grid.print(), expected);
     }
 }

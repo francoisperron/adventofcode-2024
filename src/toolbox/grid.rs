@@ -57,13 +57,16 @@ impl Grid {
         self.set_element_at(position2, element1);
     }
 
-    pub fn print(&self) {
-        for y in 0..self.max_y {
-            for x in 0..self.max_x {
-                print!("{}", self.element_at(&Position::new(x, y)));
-            }
-            println!();
-        }
+    pub fn print(&self) -> String {
+        (0..self.max_y)
+            .map(|y| {
+                (0..self.max_x)
+                    .map(|x| self.element_at(&Position::new(x, y)).to_string())
+                    .collect::<Vec<_>>()
+                    .join("")
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 }
 
