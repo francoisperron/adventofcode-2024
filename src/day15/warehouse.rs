@@ -47,7 +47,8 @@ impl Warehouse {
         for direction in self.moves.clone() {
             match self.move_object(&robot_position, &direction) {
                 Some(moves) => {
-                    moves.into_iter().rev().for_each(|(from, to)| self.grid.swap_elements(&from, &to));
+                    moves.iter().for_each(|(from, _, _)| self.grid.set_element_at(from, '.'));
+                    moves.iter().for_each(|(_, to, value)| self.grid.set_element_at(to, *value));
                     robot_position = robot_position.move_towards(&direction);
                 }
                 None => continue,
@@ -55,19 +56,59 @@ impl Warehouse {
         }
     }
 
-    fn move_object(&mut self, position: &Position, direction: &Direction) -> Option<Vec<(Position, Position)>> {
+    fn move_object(&mut self, position: &Position, direction: &Direction) -> Option<Vec<(Position, Position, char)>> {
         let next_position = &position.move_towards(direction);
-        let mut moves = vec![(*position, *next_position)];
+        let mut moves = Vec::from([(*position, *next_position, *self.grid.element_at(position))]);
 
         match *self.grid.element_at(next_position) {
             WALL => None,
             FREE_SPACE => Some(moves),
-            BOX | BIG_BOX_START | BIG_BOX_END => {
+            BOX => {
                 if let Some(new_moves) = self.move_object(next_position, direction) {
                     moves.extend(&new_moves);
                     Some(moves)
                 } else {
                     None
+                }
+            }
+            BIG_BOX_START => {
+                if direction == &Direction::Left || direction == &Direction::Right {
+                    if let Some(new_moves) = self.move_object(next_position, direction) {
+                        moves.extend(&new_moves);
+                        Some(moves)
+                    } else {
+                        None
+                    }
+                } else {
+                    let start_moves = self.move_object(next_position, direction);
+                    let end_moves = self.move_object(&next_position.move_towards(&Direction::Right), direction);
+                    if let (Some(start_moves), Some(end_moves)) = (start_moves, end_moves) {
+                        moves.extend(&start_moves);
+                        moves.extend(&end_moves);
+                        Some(moves)
+                    } else {
+                        None
+                    }
+                }
+            }
+            BIG_BOX_END => {
+                if direction == &Direction::Left || direction == &Direction::Right {
+                    if let Some(new_moves) = self.move_object(next_position, direction) {
+                        moves.extend(&new_moves);
+                        Some(moves)
+                    } else {
+                        None
+                    }
+                } else {
+                    let start_moves = self.move_object(&next_position.move_towards(&Direction::Left), direction);
+                    let end_moves = self.move_object(next_position, direction);
+                    if let (Some(start_moves), Some(end_moves)) = (start_moves, end_moves) {
+                        moves.extend(&end_moves);
+                        moves.extend(&start_moves);
+                        Some(moves)
+                    } else {
+                        None
+                    }
                 }
             }
             _ => panic!("Invalid object"),
@@ -76,7 +117,7 @@ impl Warehouse {
 
     pub fn boxes_sum(&self) -> isize {
         let boxes: isize = self.grid.positions_of(BOX).map(|p| p.x + p.y * 100).sum();
-        let big_boxes: isize = self.grid.positions_of(BIG_BOX_START).map(|p| p.x + p.y * 100).inspect(|c| print!("{} ", c)).sum();
+        let big_boxes: isize = self.grid.positions_of(BIG_BOX_START).map(|p| p.x + p.y * 100).sum();
         boxes + big_boxes
     }
 }
@@ -149,6 +190,162 @@ mod tests {
 ##.....@[][]##
 ##..........##
 ##..........##
+##############";
+        assert_eq!(warehouse.grid.print(), expected);
+    }
+
+    #[test]
+    fn moves_big_boxes_up_in_line_start() {
+        let input = "\
+##############
+##.....#....##
+##..........##
+##.....[]...##
+##.....[]...##
+##.....@....##
+##############
+
+^";
+        let mut warehouse = Warehouse::from(input);
+        warehouse.move_robot();
+
+        let expected = "\
+##############
+##.....#....##
+##.....[]...##
+##.....[]...##
+##.....@....##
+##..........##
+##############";
+        assert_eq!(warehouse.grid.print(), expected);
+    }
+
+    #[test]
+    fn moves_big_boxes_up_in_line_end() {
+        let input = "\
+##############
+##.....#....##
+##..........##
+##.....[]...##
+##.....[]...##
+##......@...##
+##############
+
+^";
+        let mut warehouse = Warehouse::from(input);
+        warehouse.move_robot();
+
+        let expected = "\
+##############
+##.....#....##
+##.....[]...##
+##.....[]...##
+##......@...##
+##..........##
+##############";
+        assert_eq!(warehouse.grid.print(), expected);
+    }
+
+    #[test]
+    fn moves_big_boxes_up() {
+        let input = "\
+##############
+##.....#....##
+##..........##
+##....[][]..##
+##.....[]...##
+##.....@....##
+##############
+
+^^";
+        let mut warehouse = Warehouse::from(input);
+        warehouse.move_robot();
+
+        let expected = "\
+##############
+##.....#....##
+##....[][]..##
+##.....[]...##
+##.....@....##
+##..........##
+##############";
+        assert_eq!(warehouse.grid.print(), expected);
+    }
+
+    #[test]
+    fn moves_big_boxes_down_line_start() {
+        let input = "\
+##############
+##.....@....##
+##.....[]...##
+##.....[]...##
+##..........##
+##.....#....##
+##############
+
+v";
+        let mut warehouse = Warehouse::from(input);
+        warehouse.move_robot();
+
+        let expected = "\
+##############
+##..........##
+##.....@....##
+##.....[]...##
+##.....[]...##
+##.....#....##
+##############";
+        assert_eq!(warehouse.grid.print(), expected);
+    }
+
+    #[test]
+    fn moves_big_boxes_down_line_end() {
+        let input = "\
+##############
+##......@...##
+##.....[]...##
+##.....[]...##
+##..........##
+##.....#....##
+##############
+
+v";
+        let mut warehouse = Warehouse::from(input);
+        warehouse.move_robot();
+
+        let expected = "\
+##############
+##..........##
+##......@...##
+##.....[]...##
+##.....[]...##
+##.....#....##
+##############";
+        assert_eq!(warehouse.grid.print(), expected);
+    }
+
+    #[test]
+    fn moves_big_boxes_down() {
+        let input = "\
+##############
+##......@...##
+##.....[]...##
+##....[][]..##
+##..........##
+##....#.....##
+##############
+
+vv";
+        let mut warehouse = Warehouse::from(input);
+        warehouse.move_robot();
+
+        let expected = "\
+##############
+##..........##
+##......@...##
+##.....[]...##
+##....[][]..##
+##....#.....##
 ##############";
         assert_eq!(warehouse.grid.print(), expected);
     }

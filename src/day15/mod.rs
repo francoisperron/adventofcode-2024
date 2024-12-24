@@ -30,21 +30,30 @@ mod tests {
         assert_eq!(warehouse.boxes_sum(), 1527563);
     }
 
-    // #[test]
-    // fn solves_part2_simple() {
-    //     let mut warehouse = Warehouse::wider(SIMPLE_2);
-    //     warehouse.move_robot();
-    //
-    //     assert_eq!(warehouse.boxes_sum(), 105 + 207 + 306);
-    // }
-    //
-    // #[test]
-    // fn solves_part2_example() {
-    //     let mut warehouse = Warehouse::wider(EXAMPLE);
-    //     warehouse.move_robot();
-    //
-    //     assert_eq!(warehouse.boxes_sum(), 9021);
-    // }
+    #[test]
+    fn solves_part2_simple() {
+        let mut warehouse = Warehouse::wider(SIMPLE_2);
+        warehouse.move_robot();
+
+        assert_eq!(warehouse.boxes_sum(), 105 + 207 + 306);
+    }
+
+    #[test]
+    fn solves_part2_example() {
+        let mut warehouse = Warehouse::wider(EXAMPLE);
+        warehouse.move_robot();
+
+        assert_eq!(warehouse.boxes_sum(), 9021);
+    }
+
+    #[test]
+    fn solves_part2() {
+        let input = daily_input(15);
+        let mut warehouse = Warehouse::wider(&input);
+        warehouse.move_robot();
+
+        assert_eq!(warehouse.boxes_sum(), 1521635);
+    }
 
     const SIMPLE: &str = "\
 ########
@@ -58,7 +67,7 @@ mod tests {
 
 <^^>>>vv<v>>v<<";
 
-    pub(crate) const SIMPLE_2: &str = "\
+    pub const SIMPLE_2: &str = "\
 #######
 #...#.#
 #.....#
