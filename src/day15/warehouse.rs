@@ -45,30 +45,32 @@ impl Warehouse {
     pub fn move_robot(&mut self) {
         let mut robot_position = self.grid.position_of(ROBOT).unwrap();
         for direction in self.moves.clone() {
-            robot_position = self.move_object(&robot_position, &direction);
+            match self.move_object(&robot_position, &direction) {
+                Some(moves) => {
+                    moves.into_iter().rev().for_each(|(from, to)| self.grid.swap_elements(&from, &to));
+                    robot_position = robot_position.move_towards(&direction);
+                }
+                None => continue,
+            }
         }
     }
 
-    pub fn move_object(&mut self, position: &Position, direction: &Direction) -> Position {
+    fn move_object(&mut self, position: &Position, direction: &Direction) -> Option<Vec<(Position, Position)>> {
         let next_position = &position.move_towards(direction);
-        let object_at_next_position = *self.grid.element_at(next_position);
-
-        match object_at_next_position {
-            WALL => *position,
-            FREE_SPACE => {
-                self.grid.swap_elements(position, next_position);
-                *next_position
-            }
+        let mut moves = vec![(*position, *next_position)];
+        
+        match *self.grid.element_at(next_position) {
+            WALL => None,
+            FREE_SPACE => Some(moves),
             BOX => {
-                let changed_position = self.move_object(next_position, direction);
-                if changed_position != *next_position {
-                    self.grid.swap_elements(position, next_position);
-                    *next_position
+                if let Some(new_moves) = self.move_object(next_position, direction) {
+                    moves.extend(&new_moves);
+                    Some(moves)
                 } else {
-                    *position
+                    None
                 }
             }
-            _ => panic!("Invalid object: {}", object_at_next_position),
+            _ => panic!("Invalid object"),
         }
     }
 
