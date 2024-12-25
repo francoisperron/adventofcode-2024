@@ -1,4 +1,8 @@
+mod bit;
 mod fruit_monitor;
+mod gate;
+mod operation;
+mod wires;
 
 #[cfg(test)]
 mod tests {
@@ -17,6 +21,14 @@ mod tests {
         let mut monitor = FruitMonitor::from(&input);
 
         assert_eq!(monitor.wires_z_output(), 56620966442854);
+    }
+
+    #[test]
+    fn solves_part2() {
+        let input = daily_input(24);
+        let monitor = FruitMonitor::from(&input);
+
+        assert_eq!(monitor.swapped_wires(), "chv,jpj,kgj,rts,vvw,z07,z12,z26");
     }
 
     pub const EXAMPLE: &str = "\

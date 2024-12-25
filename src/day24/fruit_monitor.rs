@@ -1,5 +1,8 @@
+use crate::day24::gate::Gate;
+use crate::day24::operation::Operation;
+use crate::day24::wires::Wires;
 use itertools::Itertools;
-use std::collections::HashMap;
+use std::collections::BTreeSet;
 
 pub struct FruitMonitor {
     wires: Wires,
@@ -31,128 +34,85 @@ impl FruitMonitor {
         }
         self.wires.value_of("z").unwrap()
     }
-}
 
-pub struct Wires {
-    wires: HashMap<String, Option<Bit>>,
-}
+    // https://en.wikipedia.org/wiki/Adder_(electronics)#Ripple-carry_adder
+    pub fn swapped_wires(&self) -> String {
+        let mut swapped = Swapped::default();
 
-impl Wires {
-    pub fn new() -> Wires {
-        Wires { wires: HashMap::new() }
-    }
+        let mut carry_output = self.gate_output("x00", "y00", Operation::And);
 
-    pub fn from(&mut self, input: &str) {
-        for line in input.lines() {
-            let (wire, value) = line.split_once(": ").unwrap();
-            let value = Bit::from(value);
-            self.wires.insert(wire.to_string(), value);
+        let nb_bits = self.wires.wires.iter().filter(|(_, v)| v.is_some()).count() as u8 / 2;
+        for bit in 1..nb_bits {
+            let x = format!("x{bit:02}");
+            let y = format!("y{bit:02}");
+            let z = format!("z{bit:02}");
+
+            let basic_add_output = self.gate_output(&x, &y, Operation::Xor);
+            let add_gate = self.gate(carry_output, basic_add_output, Operation::Xor);
+            swapped.try_insert_end(&add_gate.output, &z);
+            swapped.try_insert(add_gate, basic_add_output);
+            swapped.try_insert(add_gate, carry_output);
+
+            let cascade_carry_gate = self.gate(basic_add_output, carry_output, Operation::And);
+            swapped.try_insert(cascade_carry_gate, basic_add_output);
+            swapped.try_insert(cascade_carry_gate, carry_output);
+
+            let basic_carry_output = self.gate_output(&x, &y, Operation::And);
+            let carry_gate = self.gate(&cascade_carry_gate.output, basic_carry_output, Operation::Or);
+            swapped.try_insert(carry_gate, &cascade_carry_gate.output);
+            swapped.try_insert(carry_gate, basic_carry_output);
+
+            carry_output = &carry_gate.output;
         }
+
+        swapped.print()
     }
 
-    pub fn set(&mut self, wire: &str, value: Option<Bit>) {
-        self.wires.insert(wire.to_string(), value);
-    }
-
-    pub fn get(&self, wire: &str) -> Option<Bit> {
-        self.wires.get(wire).copied().unwrap_or(None)
-    }
-
-    pub fn value_of(&self, wire: &str) -> Option<usize> {
-        let values: Vec<Option<Bit>> = self
-            .wires
+    fn gate_output(&self, input_a: &str, input_b: &str, operation: Operation) -> &str {
+        self.gates
             .iter()
-            .filter(|(w, _)| w.starts_with(wire))
-            .sorted_by_key(|(w, _)| *w)
-            .rev()
-            .map(|(_, v)| *v)
-            .collect();
+            .find(|e| e.is_input(input_a) && e.is_input(input_b) && e.operation == operation)
+            .unwrap()
+            .output
+            .as_str()
+    }
 
-        if values.iter().any(|v| v.is_none()) {
-            None
-        } else {
-            let bits: String = values.iter().map(|v| v.unwrap().value()).join("");
-            let value = usize::from_str_radix(&bits, 2).unwrap();
-            Some(value)
-        }
+    fn gate(&self, input_a: &str, input_b: &str, operation: Operation) -> &Gate {
+        self.gates
+            .iter()
+            .find(|e| (e.is_input(input_a) || e.is_input(input_b)) && e.operation == operation)
+            .unwrap()
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
-pub struct Bit(bool);
+#[derive(Default)]
+pub struct Swapped(BTreeSet<String>);
 
-impl Bit {
-    pub fn from(input: &str) -> Option<Bit> {
-        match input {
-            "1" => Some(Bit(true)),
-            "0" => Some(Bit(false)),
-            _ => None,
+impl Swapped {
+    pub fn try_insert(&mut self, gate: &Gate, output: &str) {
+        if !gate.is_input(output) {
+            self.0.insert(output.to_string());
         }
     }
 
-    pub fn value(&self) -> char {
-        match self {
-            Bit(true) => '1',
-            Bit(false) => '0',
+    pub fn try_insert_end(&mut self, output: &str, end: &str) {
+        if output != end {
+            self.0.insert(end.to_string());
+            self.0.insert(output.to_string());
         }
     }
-}
 
-#[derive(Debug, PartialEq, Eq, Clone)]
-pub struct Gate {
-    pub input_a: String,
-    input_b: String,
-    output: String,
-    operation: Operation,
-}
-
-impl Gate {
-    pub fn from(input: &str) -> Gate {
-        let (input_a, operation, input_b, _arrow, output) = input.split(" ").map(|i| i.to_string()).collect_tuple().unwrap();
-        Gate { input_a, input_b, output, operation: Operation::from(operation.as_str()) }
-    }
-
-    pub fn output(&self, wires: &mut Wires) {
-        let input_a = wires.get(&self.input_a);
-        let input_b = wires.get(&self.input_b);
-        if let (Some(a), Some(b)) = (input_a, input_b) {
-            let output = self.operation.evaluate(a, b);
-            wires.set(&self.output, Some(output));
-        }
+    pub fn print(&self) -> String {
+        self.0.iter().join(",")
     }
 }
-
-#[derive(Debug, PartialEq, Eq, Clone)]
-pub enum Operation {
-    And,
-    Or,
-    Xor,
-}
-
-impl Operation {
-    pub fn from(input: &str) -> Operation {
-        match input {
-            "AND" => Operation::And,
-            "OR" => Operation::Or,
-            "XOR" => Operation::Xor,
-            _ => unreachable!(),
-        }
-    }
-    
-    pub fn evaluate(&self, a: Bit, b: Bit) -> Bit {
-        match self {
-            Operation::And => Bit(a.0 & b.0),
-            Operation::Or => Bit(a.0 | b.0),
-            Operation::Xor => Bit(a.0 ^ b.0),
-        }
-    }
-}
-
-    
 
 #[cfg(test)]
 mod tests {
-    use crate::day24::fruit_monitor::{Bit, FruitMonitor, Gate, Operation};
+    use crate::day24::bit::Bit;
+    use crate::day24::fruit_monitor::FruitMonitor;
+    use crate::day24::gate::Gate;
+    use crate::day24::operation::Operation;
     use crate::day24::tests::EXAMPLE;
     use std::collections::HashMap;
 
