@@ -7,7 +7,7 @@ description = "Advent of code 2024"
 license = "MIT"
 
 [dependencies]
-ureq = "2.11.0"
-regex = "1.11.1"
-itertools = "0.13.0"
+ureq = "3.1.4"
+regex = "1.12.2"
+itertools = "0.14.0"
 num-complex = "0.4.6"

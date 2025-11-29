@@ -47,7 +47,7 @@ impl Stone {
 
         match self.number {
             0 => vec![Stone::new(1)],
-            _n if number_as_string.len() % 2 == 0 => {
+            _n if number_as_string.len().is_multiple_of(2) => {
                 let (high, low) = number_as_string.split_at(number_as_string.len() / 2);
                 vec![Stone::new(high.parse().unwrap()), Stone::new(low.parse().unwrap())]
             }
