@@ -35,14 +35,14 @@ impl WordSearch {
         self.grid
             .elements
             .iter()
-            .filter(|(&position, element)| {
+            .filter(|&(&position, element)| {
                 let ul = self.grid.element_at(&(position + Position::new(-1, -1)));
                 let ur = self.grid.element_at(&(position + Position::new(-1, 1)));
                 let middle = *element;
                 let ll = self.grid.element_at(&(position + Position::new(1, -1)));
                 let lr = self.grid.element_at(&(position + Position::new(1, 1)));
 
-                matches!(&[ul, ur, middle, ll, lr], &['M', 'M', 'A', 'S', 'S'] | &['M', 'S', 'A', 'M', 'S'] | &['S', 'M', 'A', 'S', 'M'] | &['S', 'S', 'A', 'M', 'M'])
+                matches!(&[ul, ur, &middle, ll, lr], &['M', 'M', 'A', 'S', 'S'] | &['M', 'S', 'A', 'M', 'S'] | &['S', 'M', 'A', 'S', 'M'] | &['S', 'S', 'A', 'M', 'M'])
             })
             .count()
     }

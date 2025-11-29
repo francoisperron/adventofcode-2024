@@ -1,4 +1,4 @@
-use itertools::{iterate, Itertools};
+use itertools::{Itertools, iterate};
 use std::collections::HashMap;
 
 pub struct Secrets {

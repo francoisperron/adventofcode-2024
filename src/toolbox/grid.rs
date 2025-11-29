@@ -32,11 +32,11 @@ impl Grid {
     }
 
     pub fn position_of(&self, element: char) -> Option<Position> {
-        self.elements.iter().find(|(_, &v)| v == element).map(|(position, _)| *position)
+        self.elements.iter().find(|&(_, &v)| v == element).map(|(position, _)| *position)
     }
 
     pub fn positions_of(&self, element: char) -> impl Iterator<Item = Position> + '_ {
-        self.elements.iter().filter(move |(_, &v)| v == element).map(|(position, _)| *position)
+        self.elements.iter().filter(move |&(_, &v)| v == element).map(|(position, _)| *position)
     }
 
     pub fn is_inbound(&self, position: &Position) -> bool {

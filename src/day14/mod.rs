@@ -3,8 +3,8 @@ mod robots;
 #[cfg(test)]
 mod tests {
     use crate::day14::robots::Robots;
-    use crate::toolbox::daily::daily_input;
     use crate::toolbox::XY;
+    use crate::toolbox::daily::daily_input;
 
     #[test]
     fn solves_part1_example() {

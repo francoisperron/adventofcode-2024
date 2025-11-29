@@ -63,11 +63,7 @@ impl ClawMachine {
         let b_push = self.button_a.determinant(&self.prize) / self.button_a.determinant(&self.button_b);
         let a_push = (self.prize.x - b_push * self.button_b.x) / self.button_a.x;
 
-        if self.button_a * a_push + self.button_b * b_push == self.prize {
-            Some(XY::new((a_push, b_push)))
-        } else {
-            None
-        }
+        if self.button_a * a_push + self.button_b * b_push == self.prize { Some(XY::new((a_push, b_push))) } else { None }
     }
 }
 

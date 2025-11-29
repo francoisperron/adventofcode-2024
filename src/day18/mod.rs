@@ -3,8 +3,8 @@ mod memory;
 #[cfg(test)]
 mod tests {
     use crate::day18::memory::Memory;
-    use crate::toolbox::daily::daily_input;
     use crate::toolbox::Position;
+    use crate::toolbox::daily::daily_input;
 
     #[test]
     fn solves_part1_example() {

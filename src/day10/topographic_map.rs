@@ -9,7 +9,7 @@ pub struct TopographicMap {
 impl TopographicMap {
     pub fn from(input: &str) -> Self {
         let grid = Grid::from(input);
-        let trailheads = grid.elements.iter().filter(|(_, &v)| v == '0').map(|(&p, _)| p).collect::<Vec<Position>>();
+        let trailheads = grid.elements.iter().filter(|&(_, &v)| v == '0').map(|(&p, _)| p).collect::<Vec<Position>>();
         Self { grid, trailheads }
     }
 

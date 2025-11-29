@@ -1,4 +1,4 @@
-use crate::day21::pads::{Pad, DIRECTIONAL_PAD, NUMERIC_PAD};
+use crate::day21::pads::{DIRECTIONAL_PAD, NUMERIC_PAD, Pad};
 use crate::day21::robot_command::RobotCommand;
 use crate::toolbox::{Direction, Position};
 use itertools::Itertools;
@@ -121,11 +121,7 @@ impl Code {
         match command {
             RobotCommand::Move(direction) => {
                 let new_position = position.move_towards(&direction);
-                if pad.is_a_button(&new_position) {
-                    (Some(new_position), None)
-                } else {
-                    (None, None)
-                }
+                if pad.is_a_button(&new_position) { (Some(new_position), None) } else { (None, None) }
             }
             RobotCommand::Press => (Some(position), Some(pad.value_at(&position))),
         }

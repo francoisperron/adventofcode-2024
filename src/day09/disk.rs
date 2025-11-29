@@ -25,11 +25,7 @@ impl Disk {
             .enumerate()
             .map(|(i, c)| {
                 let size = c.to_digit(10).unwrap() as usize;
-                if i % 2 == 0 {
-                    Block::new_data_block(i / 2, size)
-                } else {
-                    Block::new_free_block(size)
-                }
+                if i % 2 == 0 { Block::new_data_block(i / 2, size) } else { Block::new_free_block(size) }
             })
             .collect();
         Disk { blocks }
